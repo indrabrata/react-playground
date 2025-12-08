@@ -62,38 +62,60 @@ function App() {
 function Header() {
   return (
     <header className="header">
-      <h1 style={{}} className="">
-        Bali Pizza Co.
-      </h1>
+      <h1 style={{}}>Bali Pizza Co.</h1>
     </header>
   );
 }
 
+// React will not render true or false
 function Menu() {
+  const pizzas = pizzaData;
+
   return (
     <main className="menu">
       <h2>Our Menu</h2>
-      <Pizza
-        name="Pizza Spinaci"
-        ingredients="Tomato, mozarella, spinach, and ricotta cheese"
-        price={10}
-        photoName="pizzas/spinaci.jpg"
-      />
-      <Pizza />
-      <Pizza />
-      <Pizza />
+      {pizzas.length > 0 ? (
+        // React Fragment
+        <React.Fragment key={"menu"}>
+          <p>
+            Authentic Italian cuisine, 6 creative dishes to choose from, All
+            from our stone oven, all organic, all delicious.
+          </p>
+
+          <ul className="pizzas">
+            {/* for each not working because it just iterating the data, but here we need new array with jsx, that's why we need map */}
+            {pizzas.map((it) => (
+              <Pizza pizzaObj={it} key={it.name} />
+            ))}
+          </ul>
+        </React.Fragment>
+      ) : (
+        <p>We're still working on our menu, please come later</p>
+      )}
     </main>
   );
 }
 
+// Props are immutable -> read only
+// If changes props it will affect the parent component creating side effects (not pure)
+// Side effect appear when mutate some data that outside the current function
+// React component must be pure, same input same ourput and there is side effect
+// One way data flow is about the data (props) is from the high hierarchy into the bottom one
+// There is two way data flow adopted by angular (but i think it's less efficient and difficult to maintain)
+// Component should never mutate any data that outside the function
 function Pizza(props) {
+  const { photoName, name, ingredients, price, soldOut } = {
+    ...props.pizzaObj,
+  };
   return (
-    <div>
-      <img src={props.photoName} alt={props.name} />
-      <h3>{props.name}</h3>
-      <p>{props.ingredients}</p>
-      <span>{props.price}</span>
-    </div>
+    <li className={`pizza ${soldOut ? "sold-out" : ""}`}>
+      <img src={photoName} alt={name} />
+      <div>
+        <h3>{name}</h3>
+        <p>{ingredients}</p>
+        <span>{soldOut ? "Sold Out" : price}</span>
+      </div>
+    </li>
   );
 }
 
@@ -107,8 +129,20 @@ function Footer() {
   else alert("Sorry, we are closed");
   return (
     <footer className="footer">
-      {new Date().toDateString()}. We're curently open
+      {isOpen && <Order closeHour={closeHour} openHour={openHour} />}
     </footer>
+  );
+}
+
+function Order({ closeHour, openHour }) {
+  return (
+    <div className="order">
+      <p>
+        Restaurant is Open from {openHour}:00 until {closeHour}:00. Come visit
+        us or order online.
+      </p>
+      <button className="btn">Order</button>
+    </div>
   );
 }
 
@@ -127,3 +161,4 @@ root.render(
 // JSX or TSX declarative syntax to describe what component look like and how they work. (Extention of javascript), define a ui based on state and props
 // Babel convert jsx -> js
 // if we use the js or ts, we need to create the react.CreateElement always
+// Basically JSX just like html but we can enter javascript mode
