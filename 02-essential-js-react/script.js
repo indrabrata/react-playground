@@ -269,5 +269,5 @@ const booksAfterDelete = booksAfterAdd.filter((it) => it.id !== 3);
 
 // update book object in the array
 const booksAfterUpdate = booksAfterDelete.map((it) =>
-  it.id === 1 ? { ...it, pages: 100 } : it
+  it.id === 1 ? { ...it, pages: 100 } : it,
 );
